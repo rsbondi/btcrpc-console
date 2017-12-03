@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>bitcoin RPC console</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <script>
+      // Monaco uses a custom amd loader that over-rides node's require.
+      // Keep a reference to node's require so we can restore it after executing the amd loader file.
+      var nodeRequire = global.require;
+    </script>
+    <script src="../node_modules/monaco-editor/min/vs/loader.js"></script>
+    <script>
+      // Save Monaco's amd require and restore Node's require
+      var amdRequire = global.require;
+      global.require = nodeRequire;
+    </script>
+
+  <div class="console-wrapper">
+    <div class="console"></div>
+    <div id="console-command"></div>
+  </div>
+
+  
+  <script src="js/client.js"></script>
+</body>
+
+</html>

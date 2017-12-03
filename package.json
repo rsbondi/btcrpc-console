@@ -1,0 +1,21 @@
+{
+  "name": "btcrpc-console",
+  "version": "0.1.0",
+  "main": "src/main.js",
+  "description": "An RPC console for bitcoin node, similar to bitcoin-qt debug console",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rsbondi/btcrpc-console"
+  },
+  "scripts": {
+    "start": "./node_modules/.bin/electron ."
+  },
+  "devDependencies": {
+    "electron": "^1.7.9"
+  },
+  "dependencies": {
+    "monaco-editor": "^0.10.1"
+  },
+  "author": "Richard Bondi",
+  "license": "MIT"
+}
