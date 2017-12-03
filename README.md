@@ -1,6 +1,6 @@
 # btcrpc-console
 
-## Descriptioin
+## Description
 A console for use in testing a bitcoin node via the rpc interface.  Can be used instead of the bitcoin-cli or bitcoin-qt console.
 
 ## Features
