@@ -33,7 +33,22 @@ class CommandEditor {
       contextMenuGroupId: 'navigation',
       contextMenuOrder: 1.1,
       run: function (ed) {
-        const val = ed.getModel().getLineContent(ed.getPosition().lineNumber).replace(/[\n\r]+/, '')
+        let multival = ''
+        for (let i = ed.getPosition().lineNumber; i<ed.getModel().getLineCount()+1; i++) {
+          let tmpline = ed.getModel().getLineContent(i)
+          const tokens = monaco.editor.tokenize(tmpline, 'bitcoin-rpc')
+          console.log('line tokens', tokens)
+          if (i == ed.getPosition().lineNumber) {
+            multival += tmpline
+          } else {
+            tmpline = tmpline.replace(/^\s+/,'')
+            if(!tmpline) break;
+            const words = tmpline.split(/\s+/)
+            if(~window.helpers.map(w => w.command).indexOf(words[0])) break
+            multival += tmpline
+          }
+        }
+        const val = multival //ed.getModel().getLineContent(ed.getPosition().lineNumber).replace(/[\n\r]+/, '')
         let chunks = val.split(' ') // TODO: better parsing to account for varying json format
         const method = chunks[0]
         let params = []

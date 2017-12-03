@@ -3,6 +3,20 @@
 ## Description
 A console for use in testing a bitcoin node via the rpc interface.  Can be used instead of the bitcoin-cli or bitcoin-qt console.
 
+## Motivation
+I wanted to be able to learn the protocol, following the examples seemed difficult using the
+bitcoin-cli and setting environment variables or copy pasting the results into the next command.
+I found it challenging to keep track of everything.  
+
+Also I like to work from my laptop out on the back porch, but find it impractical to run
+a full node on the laptop and keeping in sync when laptop is not always in use.
+
+This allows me to connect to my node remotely.  Also I can enter the commands in
+a more friendly visible way, with everything in one place, the completion, argument help, and 
+complete help on command available on hover.  Additionally, the history is visible in the 
+command editor, and re-running is easy
+
+
 ## Features
 ### Command Input
 * A multi line code editor for entering commands rather than a single line console input
@@ -55,9 +69,30 @@ Also, launch configurations are provided for vscode users
 | F5      | execute command at command editor cursor postion |
 | CtrlCmd+i | Insert from result cursor position to command editior selection, this allows easy reuse of results as command arguments
 
+### Entering Commands
+
+A single command may be multi line.  Leaving a single space at the end of a line indicates an argument separation
+
+example:
+```
+createmultisig 2
+[
+    "key1",
+    "key2"
+]
+```
+would requre a space after the 2 to indicate the array as a separate argument, future plans to improve parsing will eliminate this requirement
+
+An additional known limitation is the argument help currently only works for single line commands
+but will be updated with parser work.
+
 ### Packaging
 install [electron-packager](https://www.npmjs.com/package/electron-packager)
 
 and run `electron-packager .`
 
 this will create an executable for your operating system
+
+## Screenshot
+
+![screenshot.png](https://github.com/rsbondi/btcrpc-console/blob/master/screenshot.png "What it looks like")

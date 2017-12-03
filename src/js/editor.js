@@ -20,7 +20,7 @@ const registerTokens = function(helpers) {
     tokenizer: {
       root: [
         [/([a-zA-Z_\$][\w\$]*)(\s*)(:?)/, {
-          cases: { '$1@keywords': ['keyword', 'white', 'delimiter'] }
+          cases: { '$1@keywords': ['keyword', 'white', 'delimiter'], '@default': ['identifier', 'white', 'delimiter'] }
         }],
         [/"([^"\\]|\\.)*$/, 'string.invalid'],  // non-teminated string
         [/'([^'\\]|\\.)*$/, 'string.invalid'],  // non-teminated string
@@ -32,6 +32,11 @@ const registerTokens = function(helpers) {
         [/0[xX][\da-fA-F]+/, 'number.hex'],
         [/0[0-7]+/, 'number.octal'],
         [/\d+/, 'number'],
+        // [/[{}\[\]]/, '@brackets'],
+        [/\[/, 'bracket.square.open'],
+        [/\]/, 'bracket.square.close'],
+        [/[ \t\r\n]+/, 'white'],
+        [/[;,.]/, 'delimiter'],
      ],
      string: [
         [/[^\\"']+/, 'string'],
@@ -49,6 +54,10 @@ const registerTokens = function(helpers) {
     keywords: helpers.concat('true', 'false', 'null',),
     exponent: /[eE][\-+]?[0-9]+/,
     escapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
+    brackets: [
+      ['{', '}', 'bracket.curly'],
+      ['[', ']', 'bracket.square']
+    ],
 
   
   });

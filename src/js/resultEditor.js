@@ -39,7 +39,7 @@ class ResultEditor {
         if (word) {
           const cmd = self.commandEditor.getPosition()
           self.commandEditor.executeEdits('', [
-            { range: new monaco.Range(cmd.lineNumber, cmd.column, cmd.lineNumber, cmd.column), text: word.word }
+            { range: commandEditor.getSelection().cloneRange(), text: word.word }
           ])
           const col = cmd.column + word.word.length
           self.commandEditor.setSelection(new monaco.Range(cmd.lineNumber, col, cmd.lineNumber, col))
