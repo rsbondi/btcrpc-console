@@ -32,29 +32,34 @@ class CommandEditor {
       keybindingContext: null,
       contextMenuGroupId: 'navigation',
       contextMenuOrder: 1.1,
+
       run: function (ed) {
-        let multival = ''
-        for (let i = ed.getPosition().lineNumber; i<ed.getModel().getLineCount()+1; i++) {
-          let tmpline = ed.getModel().getLineContent(i)
-          const tokens = monaco.editor.tokenize(tmpline, 'bitcoin-rpc')
-          console.log('line tokens', tokens)
-          if (i == ed.getPosition().lineNumber) {
-            multival += tmpline
-          } else {
-            tmpline = tmpline.replace(/^\s+/,'')
-            if(!tmpline) break;
-            const words = tmpline.split(/\s+/)
-            if(~window.helpers.map(w => w.command).indexOf(words[0])) break
-            multival += tmpline
-          }
-        }
-        const val = multival //ed.getModel().getLineContent(ed.getPosition().lineNumber).replace(/[\n\r]+/, '')
-        let chunks = val.split(' ') // TODO: better parsing to account for varying json format
+        let val = require('../js/editor').getCommandBlock(ed.getModel(), ed.getPosition()).map(b => b.text).join(' ')
+        const tokens = monaco.editor.tokenize(val, 'bitcoin-rpc')[0]
+        let chunks = val.split(' ')
         const method = chunks[0]
-        let params = []
+        let params = [], brackets = []
         if (chunks.length > 1) {
           try {
-            params = chunks.slice(1).map(c => JSON.parse(c))
+            tokens.forEach((t, ti) => {
+                if(ti===0) return
+                const prevToken =  tokens[ti-1] 
+                const tokenVal = val.slice(t.offset, ti == tokens.length-1 ? val.length : tokens[ti+1].offset)
+                if(brackets.length && t.type != "white.bitcoin-rpc") {
+                     brackets[0]+= tokenVal
+                     if(t.type=="bracket.square.close.bitcoin-rpc") {
+                         params.push(JSON.parse(brackets[0]))
+                         brackets.shift()
+                     }
+                     return
+                }
+                if(prevToken.type =="white.bitcoin-rpc") {
+                    if(t.type=="bracket.square.open.bitcoin-rpc") {
+                        brackets.unshift('[')
+                    } else params.push(JSON.parse(tokenVal))                    
+                }
+            });
+    
           } catch (err) {
             self.appendToEditor(self.resultEditor, `Parse error: ${val} - ${err}\n\n`)
             return
@@ -67,10 +72,9 @@ class CommandEditor {
           self.appendToEditor(self.resultEditor, content)
         }).catch(err => console.log)
         return null;
-      
       }
-    });
 
+    });
   }
 }
 

@@ -65,6 +65,34 @@ const registerTokens = function(helpers) {
 
 }
 
+let getCommandBlock = function(model, position) {
+    let line = position.lineNumber, wordAtPos, word = ''
+    let block = model.getLineContent(line) ? [] : [{text:''}] // keep block alive on enter
+    let tmpline
+    while(tmpline = model.getLineContent(line)) {
+        wordAtPos = model.getWordAtPosition({lineNumber: line, column: 1})
+        block.unshift({text: model.getLineContent(line), offset: line - position.lineNumber})
+        if(wordAtPos) word = wordAtPos.word
+        if(word) {
+            if(~window.helpers.map(w => w.command).indexOf(word)) break;
+        }
+        line--
+        if(line===0) break
+    }
+    line = position.lineNumber + 1
+    if(line > model.getLineCount()) return block
+    while(tmpline = model.getLineContent(line)) {
+        wordAtPos = model.getWordAtPosition({lineNumber: line, column: 1})
+        if(wordAtPos && ~window.helpers.map(w => w.command).indexOf(wordAtPos.word)) break;
+        tmpline = tmpline.replace(/^\s+/,'')
+        if(!tmpline) break;
+        block.push({text: model.getLineContent(line), offset: line - position.lineNumber})
+        line++
+        if(line > model.getLineCount()) break
+    }
+    return block
+  }
+
 const init = function(editor) {
 
   var execCommandId = editor.addCommand(0, function (wtf, line) { // don't knnow what first argument is???
@@ -137,34 +165,6 @@ const init = function(editor) {
     }
   });
 
-  function getCommandBlock(model, position) {
-    let block = []
-    let line = position.lineNumber, wordAtPos, word = ''
-    let tmpline
-    while(tmpline = model.getLineContent(line)) {
-        wordAtPos = model.getWordAtPosition({lineNumber: line, column: 1})
-        block.unshift({text: model.getLineContent(line), offset: line - position.lineNumber})
-        if(wordAtPos) word = wordAtPos.word
-        if(word) {
-            if(~window.helpers.map(w => w.command).indexOf(word)) break;
-        }
-        line--
-        if(line===0) break
-    }
-    line = position.lineNumber + 1
-    if(line > model.getLineCount()) return block
-    while(tmpline = model.getLineContent(line)) {
-        wordAtPos = model.getWordAtPosition({lineNumber: line, column: 1})
-        if(wordAtPos && ~window.helpers.map(w => w.command).indexOf(wordAtPos.word)) break;
-        tmpline = tmpline.replace(/^\s+/,'')
-        if(!tmpline) break;
-        block.push({text: model.getLineContent(line), offset: line - position.lineNumber})
-        line++
-        if(line > model.getLineCount()) break
-    }
-    return block
-  }
-
   function getBlockIndex(block, col) {
     let index = -1
     let lineindex = block.reduce((o, c, i) => c.offset===0 ? i : o, -1)
@@ -174,16 +174,10 @@ const init = function(editor) {
         const token = tokens[i]
         token.forEach((t, ti) => {
             const prevToken =  ti===0 ? i===0 ? null : tokens[i-1][tokens[i-1].length-1] : token[ti-1] 
-            console.log('token, previous', t.type, !prevToken || prevToken.type)
             switch(t.type) {
-                case "keyword.bitcoin-rpc":
-                    break
                 case "white.bitcoin-rpc":
                     if(prevToken.type=="keyword.bitcoin-rpc") index=0
                     if(~["number.bitcoin-rpc", "string.bitcoin-rpc", "identifier.bitcoin-rpc"].indexOf(prevToken.type) && !brackets.length) index++
-                    break
-                case "number.bitcoin-rpc":
-                case "string.bitcoin-rpc":
                     break
                 case "bracket.square.open.bitcoin-rpc":
                     brackets.unshift('square')
@@ -191,8 +185,6 @@ const init = function(editor) {
                 case "bracket.square.close.bitcoin-rpc":
                     brackets.shift('square')   
                     index++             
-                    break
-                case "delimiter.bitcoin-rpc":
                     break
                 
             }
@@ -203,7 +195,6 @@ const init = function(editor) {
 
   monaco.languages.registerSignatureHelpProvider('bitcoin-rpc', {
     provideSignatureHelp: function (model, position) {
-      console.log('provide sig')
       const block = getCommandBlock(model, position)
       let word = ''
       if(block.length) word = block[0].text.split(' ')[0]
@@ -252,6 +243,7 @@ module.exports = {
   require: amdRequire,
   registerTokens: registerTokens,
   init: init,
+  getCommandBlock: getCommandBlock,
   commandConfig: {
     value: '',
     language: 'bitcoin-rpc',
