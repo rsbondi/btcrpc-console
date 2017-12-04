@@ -123,6 +123,21 @@ function post(payload) {
  
 }
 window.postRPC = post
+let helpContent = {} // cache help content
+window.getHelpContent = function(key) {
+  if(!~window.helpers.map(h => h.command).indexOf(key)) {
+      return new Promise(resolve => resolve({results:[]}))
+  }
+  if(helpContent[key]) {
+      let promise = new Promise((resolve, reject) => {
+          resolve(helpContent[key])
+      })
+      return promise
+  } else return window.postRPC({ method: 'help', params: [key] }).then(resp => {
+      helpContent[key] = resp
+      return resp
+    })
+}
 
 editorModule.require(['vs/editor/editor.main'], function () {
   const resultModule = require('./js/resultEditor')
