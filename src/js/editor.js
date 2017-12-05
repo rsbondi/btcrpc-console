@@ -35,6 +35,8 @@ const registerTokens = function(helpers) {
         // [/[{}\[\]]/, '@brackets'],
         [/\[/, 'bracket.square.open'],
         [/\]/, 'bracket.square.close'],
+        [/{/, 'bracket.curly.open'],
+        [/}/, 'bracket.curly.close'],
         [/[ \t\r\n]+/, 'white'],
         [/[;,.]/, 'delimiter'],
         [/null/, 'null'],

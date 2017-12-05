@@ -81,10 +81,7 @@ createmultisig 2
     "key2"
 ]
 ```
-would requre a space after the 2 to indicate the array as a separate argument, future plans to improve parsing will eliminate this requirement
-
-An additional known limitation is the argument help currently only works for single line commands
-but will be updated with parser work.
+Currently argument help does not trigger on tab, see [issue](https://github.com/Microsoft/monaco-editor/issues/658)
 
 ### Packaging
 install [electron-packager](https://www.npmjs.com/package/electron-packager)

@@ -45,29 +45,37 @@ class CommandEditor {
                 if(ti===0) return
                 const prevToken =  tokens[ti-1] 
                 const tokenVal = val.slice(t.offset, ti == tokens.length-1 ? val.length : tokens[ti+1].offset)
+                if(prevToken.type =="white.bitcoin-rpc") {
+                    if((t.type=="bracket.square.open.bitcoin-rpc" || t.type=="bracket.curly.open.bitcoin-rpc"))  {
+                        brackets.unshift('')
+                        console.log(JSON.stringify(brackets))
+                    } else if(!brackets.length) params.push(JSON.parse(tokenVal))                    
+                }
                 if(brackets.length && t.type != "white.bitcoin-rpc") {
                      brackets[0]+= tokenVal
-                     if(t.type=="bracket.square.close.bitcoin-rpc") {
-                         params.push(JSON.parse(brackets[0]))
-                         brackets.shift()
+                     if((t.type=="bracket.square.close.bitcoin-rpc" || t.type=="bracket.curly.close.bitcoin-rpc")) {
+                         if(brackets.length == 1) {
+                            const done = brackets.shift() 
+                            console.log('end of inner bracket',done)
+                            params.push(JSON.parse(done))
+                         } else {
+                           const raw = brackets.shift()
+                           brackets[0] += raw
+                           console.log('end of outer bracket',brackets[0])
+                         }
                      }
-                     return
-                }
-                if(prevToken.type =="white.bitcoin-rpc") {
-                    if(t.type=="bracket.square.open.bitcoin-rpc") {
-                        brackets.unshift('[')
-                    } else params.push(JSON.parse(tokenVal))                    
+                     
                 }
             });
     
           } catch (err) {
-            self.appendToEditor(self.resultEditor, `Parse error: ${val} - ${err}\n\n`)
+            self.appendToEditor(self.resultEditor, `${err}\n\n`)
             return
           }
         }
         consoleBuffer.unshift(val)
         post({ method: method, params: params }).then(response => {
-          let content = val + '\n'
+          let content = method+' '+params.map(p => JSON.stringify(p)).join(' ') + '\n'
           content += JSON.stringify(response, null, 2) + '\n\n'
           self.appendToEditor(self.resultEditor, content)
         }).catch(err => console.log)
