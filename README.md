@@ -71,7 +71,7 @@ Also, launch configurations are provided for vscode users
 
 ### Entering Commands
 
-A single command may be multi line.  Leaving a single space at the end of a line indicates an argument separation
+A single command may be multi line.  Leave whitespace for argument separation, JSON objects are parsed as a single argument.
 
 example:
 ```
@@ -89,6 +89,11 @@ install [electron-packager](https://www.npmjs.com/package/electron-packager)
 and run `electron-packager .`
 
 this will create an executable for your operating system
+
+## Bitcoin Forks
+This console should work with bitcoin forks
+
+ex. To run with litecoin testnet `npm start -- -port=19332 -config=/home/yourhome/.litecoin/litecoin.conf`
 
 ## Screenshot
 
