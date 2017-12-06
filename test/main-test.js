@@ -26,7 +26,7 @@ async function runTests() {
       console.log(log.level);
       return log.level == "ERROR"
     });
-    assert.equal(errors.length, 0, 'no render logs'); // deprecation warning, how can I fix???
+    assert.equal(errors.length, 0, 'no render logs');
     
     console.log('All tests passed')
     app.stop()

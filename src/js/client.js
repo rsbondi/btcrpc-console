@@ -95,10 +95,10 @@ function post(payload) {
   payload.jsonrpc = "1.0"
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", `http://${host}:${port}`, true); // this with auth header does not work
+    xhr.open("POST", `http://${host}:${port}`, true); 
 
     xhr.setRequestHeader("Content-type", "text/plain");
-    xhr.setRequestHeader("Authorization", "Basic " + window.btoa(`${user}:${password}`)); // does not work
+    xhr.setRequestHeader("Authorization", "Basic " + window.btoa(`${user}:${password}`)); 
 
     xhr.onload = function () {
       let resp = xhr.responseText;

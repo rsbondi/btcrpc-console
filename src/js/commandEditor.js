@@ -48,7 +48,6 @@ class CommandEditor {
                 if(prevToken.type =="white.bitcoin-rpc") {
                     if((t.type=="bracket.square.open.bitcoin-rpc" || t.type=="bracket.curly.open.bitcoin-rpc"))  {
                         brackets.unshift('')
-                        console.log(JSON.stringify(brackets))
                     } else if(!brackets.length) params.push(JSON.parse(tokenVal))                    
                 }
                 if(brackets.length && t.type != "white.bitcoin-rpc") {
@@ -56,12 +55,10 @@ class CommandEditor {
                      if((t.type=="bracket.square.close.bitcoin-rpc" || t.type=="bracket.curly.close.bitcoin-rpc")) {
                          if(brackets.length == 1) {
                             const done = brackets.shift() 
-                            console.log('end of inner bracket',done)
                             params.push(JSON.parse(done))
                          } else {
                            const raw = brackets.shift()
                            brackets[0] += raw
-                           console.log('end of outer bracket',brackets[0])
                          }
                      }
                      
