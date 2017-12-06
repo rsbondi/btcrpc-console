@@ -95,23 +95,15 @@ function post(payload) {
   payload.jsonrpc = "1.0"
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();
-    /* Subresource requests whose URLs contain embedded credentials (e.g. `https://user:pass@host/`) are deprecated, and will be blocked in M59, around June 2017. 
-       See https://www.chromestatus.com/feature/5669008342777856 for more details. */
-    xhr.open("POST", `http://${user}:${encodeURIComponent(password)}@${host}:${port}`, true); 
-    // xhr.open("POST", 'http://127.0.0.1:8332', true); // this with auth header does not work
+    xhr.open("POST", `http://${host}:${port}`, true); // this with auth header does not work
 
     xhr.setRequestHeader("Content-type", "text/plain");
-    // xhr.setRequestHeader("Authorization", "Basic " + window.btoa("bitcoinrpc:password")); // does not work
+    xhr.setRequestHeader("Authorization", "Basic " + window.btoa(`${user}:${password}`)); // does not work
 
     xhr.onload = function () {
-      // if (xhr.status >= 200 && xhr.status < 400) {
-        let resp = xhr.responseText;
-        let js = JSON.parse(resp)
-        resolve(js)
-
-      // } else {
-      //   reject(xhr.status)
-      // }
+      let resp = xhr.responseText;
+      let js = JSON.parse(resp)
+      resolve(js)
     };
 
     xhr.onerror = function () {
