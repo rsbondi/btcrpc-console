@@ -1,11 +1,12 @@
-var Application = require('spectron').Application
-var assert = require('assert')
+const Application = require('spectron').Application
+const assert = require('assert')
+const path = require('path')
 
-var electronPath = `${__dirname}/../node_modules/.bin/electron`
+var electronPath = path.join(__dirname, '..', 'node_modules', '.bin', 'electron')
 
 var cfg = {
   path: electronPath,
-  args: [__dirname + '/../src/main.js']
+  args: [path.join(__dirname, '..', 'src', 'main.js')]
 }
 
 var app = new Application(cfg)
@@ -19,7 +20,6 @@ async function runTests() {
     assert.equal(title, 'bitcoin RPC console', 'Verify Title')
 
     const logs = await app.client.getRenderProcessLogs();
-    // Print renderer process logs
     const errors = logs.filter(log => {
       console.log(log.message);
       console.log(log.source);
