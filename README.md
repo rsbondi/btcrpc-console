@@ -1,5 +1,7 @@
 # btcrpc-console
 
+*Note this console has been included in [this](https://github.com/rsbondi/btc-debug) project and is no longer maintained here.*
+
 ## Description
 A console for use in testing a bitcoin node via the rpc interface.  Can be used instead of the bitcoin-cli or bitcoin-qt console.
 
